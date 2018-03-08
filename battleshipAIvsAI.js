@@ -6,20 +6,26 @@ var players = [];
 
 //player 1
 var player1Obj = {};
+var player2Obj = {};
 var target1 = [];
-for (var i = 0; i < 5; i++) {
-  target1.push(getRandomInt(0, 10)+""+getRandomInt(0,10))
+var target2 = [];
+while(target1.length < 5){
+  let random = getRandomInt(0, 10)+""+getRandomInt(0,10)
+  if (target1.indexOf(random) === -1) {
+    target1.push(random)
+  }
 }
+
+while(target2.length < 5){
+  let random = getRandomInt(0, 10)+""+getRandomInt(0,10)
+  if (target2.indexOf(random) === -1) {
+    target2.push(random)
+  }
+}
+
+
 player1Obj.name = "AI 1"
 player1Obj.target = target1;
-
-
-//player2
-var player2Obj = {};
-var target2 = [];
-for (var i = 0; i < 5; i++) {
-  target2.push(getRandomInt(0, 10)+""+getRandomInt(0,10))
-}
 player2Obj.name = "AI 2"
 player2Obj.target = target2;
 
