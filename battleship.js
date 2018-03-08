@@ -14,16 +14,35 @@ function generateBoard(grid){
   return board;
 }
 
-function addShip(board){
-  let i=0;
-  let max = board[0].length
-  while(i<3){
-    let randomX = Math.floor(Math.random()*10);
+function random(num){
+  let array = [];
+  for(let i=0; i<num; i++){
+    let randomX = Math.floor(Math.random()*9);
     let randomY = Math.floor(Math.random()*(max*2)/2)*2;
-    for(let i=0; i<=board.length; i+=2){
-      for(let j=0; j<board[i].length; j++){
-        if(i==randomY && j==randomX){
-          board[i][j] = 'XXX';
+    let count = 0;
+    for(let j=0; j<array.length; j++){
+      if(array[j]==[randomX,randomY]){
+        count++;
+      }
+    }
+    if(count == 0){
+      array.push([randomX,randomY])
+    } else {
+      i--
+    }
+  }
+
+  return array;
+}
+
+function addShip(board, ship){
+  let i=0;
+  let ships = random(ship);
+  while(i<ships.length){
+    for(let m=0; m<board.length; m++){
+      for(let j=0; j<board[m].length; j++){
+        if(m==ships[i][1] && j==ships[i][0] && m%2==0 && board[m][j]!=='XXX'){
+          board[m][j] = 'XXX';
         }
       }
     }
@@ -33,28 +52,30 @@ function addShip(board){
 }
 
 function shot(board, first, second, third){
-  let boardWithShip = addShip(board);
   let shots = [first,second,third];
   let count = 0;
-  for(let i=0; i<shots.length; i++){
-    for(let j in boardWithShip){
-      for(let k in boardWithShip[i]){
-        if(shots[i][0]==k && shots[i][2]==j && boardWithShip[j][k]== 'XXX'){
-          boardWithShip[j][k] = 'DOR';
+  let i=0;
+  while(i<shots.length){
+    for(let j in board){
+      for(let k in board[i]){
+        if(shots[i][0]==k && shots[i][2]==j && board[j][k]== 'XXX'){
+          board[j][k] = 'DOR';
           count++;
         } else if(shots[i][0]==k && shots[i][2]==j){
-          boardWithShip[j][k] = 'AUO'
+          board[j][k] = 'AUO'
         }
       }
     }
+    i++
   }
-  console.log(boardWithShip)
+  console.log(board)
   return `Tembakan yang mengenai sasaran: ${count} tembakan`
 }
 
+var max = 10;
 const argv = process.argv;
-let boards = generateBoard(10)
-// console.log(addShip(boards));
-console.log(shot(boards, argv[2], argv[3], argv[4]));
+let boards = generateBoard(max);
+let boardAndShip = addShip(boards,3);
+console.log(shot(boardAndShip, argv[2], argv[3], argv[4]));
 
 // x harus kurang dari 10 dan y<19 & genap
