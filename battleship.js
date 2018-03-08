@@ -1,8 +1,10 @@
 // Your code here
-let battleShips =   [['Aircraft carrier', 5],
+var battleShips =   [['Aircraft carrier', 5],
                     ['Battleship', 4],
                     ['Cruiser', 3],
                     ['Destroyer', 2]];
+
+var coordinatesOfShips = [];
 
 function setUpBoard(){
     let yAxis = [];
@@ -18,9 +20,7 @@ function setUpBoard(){
 
 function collisionCheck_down(area, lengthOfShip, xCoor, yCoor){
     for(let counter=0; counter<lengthOfShip; counter++){
-        console.log(area[yCoor+counter][xCoor])
         if(area[yCoor+counter][xCoor] === 'S'){
-            console.log('its false down')
             return false;
         }
     }
@@ -28,11 +28,8 @@ function collisionCheck_down(area, lengthOfShip, xCoor, yCoor){
 }
 
 function collisionCheck_up(area, lengthOfShip, xCoor, yCoor){
-    for(let counter=0; counter<lengthOfShip; counter++){
-        console.log(area[yCoor-counter][xCoor]);
-        
+    for(let counter=0; counter<lengthOfShip; counter++){        
         if(area[yCoor-counter][xCoor] === 'S'){
-            console.log('its false UP')
             return false;
         }
     }
@@ -40,11 +37,8 @@ function collisionCheck_up(area, lengthOfShip, xCoor, yCoor){
 }
 
 function collisionCheck_right(area, lengthOfShip, xCoor, yCoor){
-    for(let counter=0; counter<lengthOfShip; counter++){
-        console.log(area[yCoor][xCoor+counter]);
-        
+    for(let counter=0; counter<lengthOfShip; counter++){        
         if(area[yCoor][xCoor+counter] === 'S'){
-            console.log('its false right')
             return false;
         }
     }
@@ -61,112 +55,151 @@ function collisionCheck_left(area, lengthOfShip, xCoor, yCoor){
     return true;
 }
 
-function findPlace(area,lengthOfShip, xCoor, yCoor){
+function findPlace(area,lengthOfShip){
     let exit = false;
-    let direction = Math.floor(Math.random()*4);
+    let direction = Math.floor(Math.random()*4); // 0 - 3
+    let result = [];
+
     while(!exit){
         
-        //Check Up
-        if(direction === 0){
-            if(yCoor - lengthOfShip > 0){
-                exit = collisionCheck_up(area,lengthOfShip, xCoor, yCoor);
-            }
-        }//Check Right
-        else if(direction === 1){
-            if(xCoor + lengthOfShip < 9){
-                exit = collisionCheck_right(area,lengthOfShip, xCoor, yCoor);
-            }
-        }//Check Down
-        else if(direction === 2){
-            if(yCoor + lengthOfShip < 9){
-                exit = collisionCheck_down(area,lengthOfShip, xCoor, yCoor);
-            }
-        }//Check Left
-        else if(direction === 3){
-            if(xCoor - lengthOfShip > 0){
-                exit = collisionCheck_left(area,lengthOfShip, xCoor, yCoor);
-            }
+        //Get first Coordinate
+        let xPos = Math.floor(Math.random()*10);
+        let yPos = Math.floor(Math.random()*10);
+
+        //If that coordinate is already filled    
+        while(area[yPos][xPos] !== '~'){
+            xPos = Math.floor(Math.random()*10);
+            yPos = Math.floor(Math.random()*10);
         }
 
-        //Randomize again
-        direction = Math.floor(Math.random()*4);
+        for(let counter = 0; counter<4; counter++){
+            //Check Down
+            if(direction === 0){
+                if(yPos - lengthOfShip < 0){
+                    exit = collisionCheck_down(area,lengthOfShip, xPos, yPos);
+                }else{
+                    exit = false;
+                }
+            }//Check Right
+            else if(direction === 1){
+                if(xPos - lengthOfShip < 0){
+                    exit = collisionCheck_right(area,lengthOfShip, xPos, yPos);
+                }else{
+                    exit = false;
+                }
+            }//Check Up
+            else if(direction === 2){
+                if(yPos + lengthOfShip > 9){
+                    exit = collisionCheck_up(area,lengthOfShip, xPos, yPos);
+                }else{
+                    exit = false;
+                }
+            }//Check Left
+            else if(direction === 3){
+                if(xPos + lengthOfShip > 9){
+                    exit = collisionCheck_left(area,lengthOfShip, xPos, yPos);
+                }else{
+                    exit = false;
+                }
+
+            }
+
+            if(exit === true){
+                result.push(yPos);
+                result.push(xPos);
+                result.push(direction);
+                break;
+            }
+            //Randomize again
+            direction = Math.floor(Math.random()*4);
+        }
     }
+    return result;
 }
 
 function shipPlacement(){
     let battleArea = setUpBoard();    
 
-    //Get first Coordinate
-    let xPos = Math.floor(Math.random()*10);
-    let yPos = Math.floor(Math.random()*10);
-
     //Looping to get the ships
     for(let counter =0; counter<battleShips.length; counter++){        
-    
-        //If that coordinate is already filled    
-        while(battleArea[yPos][xPos] !== '~'){
-            xPos = Math.floor(Math.random()*10);
-            yPos = Math.floor(Math.random()*10);
-        }
-    
-        //Decide which direction
-        let dir = Math.round(Math.random());
+        
         let lengthOfShip = battleShips[counter][1];
-        console.log(`${yPos}, ${xPos}  dir :${dir}`  );
+        let arrayOfLocation = findPlace(battleArea, lengthOfShip);
+        let coor = [];
+
+        direction = arrayOfLocation[2];
+        let xPos = arrayOfLocation[1];
+        let yPos = arrayOfLocation[0];
+        
+        //Down
+        if(direction === 0){
+            for(let counter2 =0; counter2<lengthOfShip; counter2++){
+                coor = [];
+                battleArea[yPos + counter2][xPos] = 'S'
+                
+                //Adding coordinate to a global variable
+                coor.push(yPos + counter2);
+                coor.push(xPos);
+                coordinatesOfShips.push(coor);
+            }    
+        
+        }//Up
+        else if(direction === 2){
+            
+            for(let counter2 =0; counter2<lengthOfShip; counter2++){
+                coor=[];
+                battleArea[yPos - counter2][xPos] = 'S'
+                coor.push(yPos - counter2);
+                coor.push(xPos);
+                coordinatesOfShips.push(coor);
+            }
     
-        //yPos = 4, xPos = 7, dir = 1
-        if(dir === 1){
-            //Down
-            if(yPos - lengthOfShip < 0){
-                for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                    battleArea[yPos + counter2][xPos] = 'S'
-                }
-            }//Up
-            else if(yPos + lengthOfShip > 9){
-                
-                for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                    battleArea[yPos - counter2][xPos] = 'S'
-                }
-            }else{
-                if(collisionCheck_up(battleArea, lengthOfShip, xPos, yPos)){
-                    for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                        battleArea[yPos + counter2][xPos] = 'S'
-                    }   
-                }else if(collisionCheck_down(battleArea, lengthOfShip, xPos, yPos)){
-                    for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                        battleArea[yPos - counter2][xPos] = 'S'
-                    }   
-                }
-            }
-        }else if(dir === 0){
-            //Right            
-            if(xPos - lengthOfShip < 0){
-                
-                for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                    battleArea[yPos][xPos + counter2] = 'S'
-                }
-            }//Left
-            else if(xPos + lengthOfShip > 9 ){
-                
-                for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                    battleArea[yPos][xPos - counter2] = 'S'
-                }
-            }else{
-                if(collisionCheck_right(battleArea, lengthOfShip, xPos, yPos)){
-                    for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                        battleArea[yPos][xPos + counter2] = 'S'
-                    }   
-                }else if(collisionCheck_left(battleArea, lengthOfShip, xPos, yPos)){
-                    for(let counter2 =0; counter2<lengthOfShip; counter2++){
-                        battleArea[yPos][xPos - counter2] = 'S'
-                    }   
-                }
-            }
+        }//Right
+        else if(direction === 1){
+            for(let counter2 =0; counter2<lengthOfShip; counter2++){
+                coor = [];
+                battleArea[yPos][xPos + counter2] = 'S'
+                coor.push(yPos);
+                coor.push(xPos + counter2);
+                coordinatesOfShips.push(coor);
+            }   
+        }//Left
+        else{
+            for(let counter2 =0; counter2<lengthOfShip; counter2++){
+                coor = [];
+                battleArea[yPos][xPos - counter2] = 'S'
+                coor.push(yPos);
+                coor.push(xPos - counter2);
+                coordinatesOfShips.push(coor);
+            }   
+        }
+        
+    }
+    return battleArea;
+}
+
+function bomb(arr){
+    let battleArea = shipPlacement();
+
+    //Bombing
+    for(let counter =2; counter<arr.length; counter++){
+        let yCoor = arr[counter].charAt(0).charCodeAt(0) - 65;
+        let xCoor = parseInt(arr[counter].charAt(1));
+        let target = [];
+        
+        target.push(yCoor);
+        target.push(xCoor);
+        
+        if(battleArea[yCoor][xCoor] === 'S'){
+            battleArea[yCoor][xCoor] = 'X'
+        }else{
+            battleArea[yCoor][xCoor] = '*'
         }
     }
 
-
     console.log(battleArea);
+    //Check if any ships are left
+
 }
 
-shipPlacement();
+bomb(process.argv);
