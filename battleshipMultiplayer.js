@@ -1,6 +1,12 @@
 // Your code here
 
 // var target = ["a1", "a2", "a3", "a4", "a5"];
+var term = require( 'terminal-kit' ).terminal ;
+term.slowTyping(
+  'BATTLESHIP ENDED !\n' ,
+  { flashStyle: term.brightWhite } ,
+  function() { process.exit() ; }
+) ;
 
 var players = [];
 

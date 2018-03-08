@@ -2,6 +2,15 @@
 
 // var target = ["a1", "a2", "a3", "a4", "a5"];
 
+var term = require( 'terminal-kit' ).terminal ;
+term.slowTyping(
+  'BATTLESHIP ENDED !\n' ,
+  { flashStyle: term.brightWhite } ,
+  function() { process.exit() ; }
+) ;
+
+
+
 var target = [];
 target.push(process.argv[2])
 target.push(process.argv[3])
@@ -138,6 +147,7 @@ function switchAlphabetToNumber(alphabet){
 function fight(){
   board = generateFleet()
   var wreckShip = []
+
 
   for (var i = 0; i < target.length; i++) {
 
