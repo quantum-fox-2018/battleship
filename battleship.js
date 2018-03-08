@@ -95,6 +95,7 @@ function shooting() {
       enemyPosition[shootingPosition[i][0]][shootingPosition[i][1]] = '/';
     } else {
       console.log('Bomb number ' + i + ' miss the target');
+      enemyPosition[shootingPosition[i][0]][shootingPosition[i][1]] = 'O';
     }
     console.log(enemyPosition);
     sleep(8000);
@@ -118,6 +119,8 @@ function sleep(milliseconds) {
   }
 }
 
+battleship();
+
 // function generateBoard() {
 //   let count = 1;
 //   for(let indexRow = 0; indexRow < 21; indexRow++) {
@@ -139,5 +142,3 @@ function sleep(milliseconds) {
 //     console.log(board);
 //   }
 // }
-
-battleship();
