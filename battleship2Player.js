@@ -1,7 +1,10 @@
 // Your code here
-// contoh input: node battleship.js Zena A1 A2 A3 A4 A5 A6 A7 A8 A9 A10
+// Aturan main:
+// Jumlah tebakan player 1 dan player 2 HARUS sama.
+// Format: Nama player 1, tebakan 1, tebakan 2, tebakan n, nama player 2, tebakan 1, tebakan 2, tebakan n.
+// Contoh input: node battleship2Player.js Zena A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 Vilenia D1 D2 D3 D4 D5 D6 D7 D8 D9 D10
 
-let enemyShips = [
+let shipPlayer1 = [
   {
     nama: "Aircraft carrier",
     size: 5,
@@ -28,6 +31,44 @@ let enemyShips = [
   },
 ];
 
+let shipPlayer2 = [
+  {
+    nama: "Aircraft carrier",
+    size: 5,
+    posisi: [],
+    kena: 0
+  },
+  {
+    nama: "Battleship",
+    size: 4,
+    posisi: [],
+    kena: 0
+  },
+  {
+    nama: "Cruiser",
+    size: 3,
+    posisi: [],
+    kena: 0
+  },
+  {
+    nama: "Destroyer",
+    size: 2,
+    posisi: [],
+    kena: 0
+  },
+];
+
+let player = [
+  {
+    nama: "",
+    tebakan: []
+  },
+  {
+    nama: "",
+    tebakan: []
+  }
+];
+
 function printBoard() {
   let board = [];
   let row;
@@ -43,7 +84,7 @@ function printBoard() {
   return board;
 }
 
-function randomEnemyShip() {
+function randomEnemyShip(ship) {
   let board = printBoard();
   let verOrHor; // 0 = vertikal, 1 = horizontal
   let randomKolom; // j
@@ -51,7 +92,7 @@ function randomEnemyShip() {
   let checkOtherShip;
   let statusTaroShip;
 
-  for(let i = 0; i < enemyShips.length; i++) {
+  for(let i = 0; i < ship.length; i++) {
     randomKolom = Math.floor(Math.random() * 10);
     randomBaris = Math.floor(Math.random() * 10);
     verOrHor = Math.round(Math.random());
@@ -61,12 +102,12 @@ function randomEnemyShip() {
         for(let k = 0; k < board[j].length; k++) {
           if((randomKolom === j) && (randomBaris === k)) {
             if(verOrHor === 0) {
-              if(j+enemyShips[i].size > board.length) {
+              if(j+ship[i].size > board.length) {
                 randomKolom = Math.floor(Math.random() * 10);
                 randomBaris = Math.floor(Math.random() * 10);
               } else {
                 checkOtherShip = false;
-                for(let l = 0; l < enemyShips[i].size; l++) {
+                for(let l = 0; l < ship[i].size; l++) {
                   if(board[j+l][k] === "O") {
                     checkOtherShip = true;
                   }
@@ -75,20 +116,20 @@ function randomEnemyShip() {
                   randomKolom = Math.floor(Math.random() * 10);
                   randomBaris = Math.floor(Math.random() * 10);
                 } else {
-                  for(let l = 0; l < enemyShips[i].size; l++) {
+                  for(let l = 0; l < ship[i].size; l++) {
                     board[j+l][k] = "O";
-                    enemyShips[i].posisi.push((j+l) + "," + k);
+                    ship[i].posisi.push((j+l) + "," + k);
                   }
                   statusTaroShip = true;
                 }
               }
             } else {
-              if(k+enemyShips[i].size > board.length) {
+              if(k+ship[i].size > board.length) {
                 randomKolom = Math.floor(Math.random() * 10);
                 randomBaris = Math.floor(Math.random() * 10);
               } else {
                 checkOtherShip = false;
-                for(let l = 0; l < enemyShips[i].size; l++) {
+                for(let l = 0; l < ship[i].size; l++) {
                   if(board[j][k+l] === "O") {
                     checkOtherShip = true;
                   }
@@ -97,9 +138,9 @@ function randomEnemyShip() {
                   randomKolom = Math.floor(Math.random() * 10);
                   randomBaris = Math.floor(Math.random() * 10);
                 } else {
-                  for(let l = 0; l < enemyShips[i].size; l++) {
+                  for(let l = 0; l < ship[i].size; l++) {
                     board[j][k+l] = "O";
-                    enemyShips[i].posisi.push(j + "," + (k+l));
+                    ship[i].posisi.push(j + "," + (k+l));
                   }
                   statusTaroShip = true;
                 }
@@ -115,31 +156,50 @@ function randomEnemyShip() {
 
 function cekTebakan() {
   let tebakanInputan = [];
-  let tebakan = [];
   for(let i = 2; i < process.argv.length; i++) {
     tebakanInputan.push(process.argv[i]);
   }
   for(let i = 0; i < tebakanInputan.length; i++) {
-    tebakan.push((tebakanInputan[i].charCodeAt(0) - 65) + "," + (Number(tebakanInputan[i].slice(1)) - 1));
+    if(i < tebakanInputan.length/2) {
+      if(i === 0) {
+        player[0].nama = tebakanInputan[i];
+      } else {
+        player[0].tebakan.push((tebakanInputan[i].charCodeAt(0) - 65) + "," + (Number(tebakanInputan[i].slice(1)) - 1));
+      }
+    } else {
+      if(i === tebakanInputan.length/2) {
+        player[1].nama = tebakanInputan[i];
+      } else {
+        player[1].tebakan.push((tebakanInputan[i].charCodeAt(0) - 65) + "," + (Number(tebakanInputan[i].slice(1)) - 1));
+      }
+    }
   }
-  return tebakan;
 }
 
 function mainBattleShip() {
-  let tebakan = cekTebakan();
-  let board = randomEnemyShip();
+  cekTebakan();
+  let boardPlayer1 = randomEnemyShip(shipPlayer1);
+  let boardPlayer2 = randomEnemyShip(shipPlayer2);
+
+  console.log(`Player 1: ${player[0].nama}`);
+  checkTembakan(boardPlayer1, shipPlayer1, player[1].tebakan, player[1].nama);
+  console.log("=======================================================");
+  console.log(`Player 2: ${player[1].nama}`);
+  checkTembakan(boardPlayer2, shipPlayer2, player[0].tebakan, player[0].nama);
+}
+
+function checkTembakan(board, ship, tebakan, player) {
   let pisahTebakan;
   let barisTebakan;
   let kolomTebakan;
-
   for(let i = 0; i < tebakan.length; i++) {
-    for(let j = 0; j < enemyShips.length; j++) {
-      for(let k = 0; k < enemyShips[j].posisi.length; k++) {
+    for(let j = 0; j < ship.length; j++) {
+      for(let k = 0; k < ship[j].posisi.length; k++) {
         pisahTebakan = tebakan[i].split(",");
         barisTebakan = Number(pisahTebakan[0]);
         kolomTebakan = Number(pisahTebakan[1]);
-        if(tebakan[i] === enemyShips[j].posisi[k]) {
-          enemyShips[j].kena++;
+        if(tebakan[i] === ship[j].posisi[k]) {
+          ship[j].kena++;
           board[barisTebakan][kolomTebakan] = "X";
         } else {
           if(board[barisTebakan][kolomTebakan] !== "X") {
@@ -150,11 +210,11 @@ function mainBattleShip() {
     }
   }
   console.log(board);
-  for(let i = 0; i < enemyShips.length; i++) {
-    if(enemyShips[i].kena > 0) {
-      console.log(`Anda telah mengenai kapal ${enemyShips[i].nama} sebanyak ${enemyShips[i].kena} kali.`);
-      if(enemyShips[i].kena == enemyShips[i].size) {
-        console.log(`Kapal ${enemyShips[i].nama} berhasil ditenggelamkan!`);
+  for(let i = 0; i < ship.length; i++) {
+    if(ship[i].kena > 0) {
+      console.log(`${player} telah mengenai kapal ${ship[i].nama} sebanyak ${ship[i].kena} kali.`);
+      if(ship[i].kena == ship[i].size) {
+        console.log(`Kapal ${ship[i].nama} telah ditenggelamkan!`);
       }
     }
   }
