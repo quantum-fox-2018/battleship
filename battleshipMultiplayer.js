@@ -2,13 +2,46 @@
 
 // var target = ["a1", "a2", "a3", "a4", "a5"];
 
-var target = [];
-target.push(process.argv[2])
-target.push(process.argv[3])
-target.push(process.argv[4])
-target.push(process.argv[5])
-target.push(process.argv[6])
+var players = [];
 
+//player 1
+var player1Obj = {};
+var target1 = [];
+target1.push(process.argv[3])
+target1.push(process.argv[4])
+target1.push(process.argv[5])
+target1.push(process.argv[6])
+target1.push(process.argv[7])
+player1Obj.name = process.argv[2]
+player1Obj.target = target1;
+// target1.push("a1")
+// target1.push("b2")
+// target1.push("c3")
+// target1.push("d4")
+// target1.push("e5")
+// player1Obj.name = "richo"
+// player1Obj.target = target1;
+
+//player2
+var player2Obj = {};
+var target2 = [];
+target2.push(process.argv[9])
+target2.push(process.argv[10])
+target2.push(process.argv[11])
+target2.push(process.argv[12])
+target2.push(process.argv[13])
+player2Obj.name = process.argv[8]
+player2Obj.target = target2;
+// target2.push("b2")
+// target2.push("c5")
+// target2.push("e4")
+// target2.push("f1")
+// target2.push("d8")
+// player2Obj.name = "andy"
+// player2Obj.target = target2;
+
+players.push(player1Obj)
+players.push(player2Obj)
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -135,7 +168,15 @@ function switchAlphabetToNumber(alphabet){
   }
 }
 
-function fight(){
+function getNamaKapal(char){
+  for (var i = 0; i < fleetTable.length; i++) {
+    if (fleetTable[i].char === char) {
+      return fleetTable[i].ship
+    }
+  }
+}
+
+function fight(target){
   board = generateFleet()
   var wreckShip = []
 
@@ -165,12 +206,12 @@ function fight(){
   }
 }
 
-function getNamaKapal(char){
-  for (var i = 0; i < fleetTable.length; i++) {
-    if (fleetTable[i].char === char) {
-      return fleetTable[i].ship
-    }
+function multiplayer(){
+  for (var i = 0; i < players.length; i++) {
+    console.log(players[i].name);
+    fight(players[i].target)
+    console.log(" ");
   }
 }
 
-fight()
+multiplayer()
